@@ -16,15 +16,7 @@ use App\Quotation;
 
 class StudentsController extends Controller
 {
-    public function create()
-    {
-        try {
-    	   return view("admin.students.create");
-        } catch (\Exception $e) {
-            echo 'caught exception', $e->getMessage();
-        }
-    }
-    public function store(Request $request)
+    public function validationOfRecords(Request $request)
     {
         $validate = $this->validate($request, [
             'name' => 'required|alpha|min:2|max:40',
@@ -37,6 +29,18 @@ class StudentsController extends Controller
             'Chemistry' => 'required|integer|between:1,100',
             'Maths' => 'required|integer|between:1,100'
         ]);
+    }
+    public function create()
+    {
+        try {
+    	   return view("admin.students.create");
+        } catch (\Exception $e) {
+            echo 'caught exception', $e->getMessage();
+        }
+    }
+    public function store(Request $request)
+    {
+        $validation = $this->validationOfRecords($request);
         try {
             $SportsArrayToString = '';
             foreach($request->Sports as $Sport) {
@@ -84,17 +88,7 @@ class StudentsController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required|alpha|min:2|max:40',
-            'email' => 'required|email',
-            'Gender' => 'required|alpha',
-            'Department' => 'required|alpha',
-            'Sports' => 'required',
-            'Colors' => 'required',
-            'Physics' => 'required|integer|between:1,100',
-            'Chemistry' => 'required|integer|between:1,100',
-            'Maths' => 'required|integer|between:1,100',
-        ]);
+        $validation = $this->validationOfRecords($request);
         try {
             $SportsArrayToString = '';
             foreach($request->Sports as $Sport) {
