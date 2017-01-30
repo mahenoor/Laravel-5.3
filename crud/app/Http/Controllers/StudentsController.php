@@ -43,12 +43,12 @@ class StudentsController extends Controller
         $validationResult = $this->validationOfRecords($request);
         try {
             $SportsArrayToString = '';
-            foreach($request->Sports as $Sport) {
+            foreach ($request->Sports as $Sport) {
                 $SportsArrayToString .= $Sport . ","; 
             }
             $request['Sports'] = rtrim($SportsArrayToString, ','); 
             $ColorsArrayToString = '';
-            foreach($request->Colors as $Color) {
+            foreach ($request->Colors as $Color) {
                 $ColorsArrayToString .= $Color . ","; 
             }
             $request['Colors'] = rtrim($ColorsArrayToString, ','); 
@@ -91,12 +91,12 @@ class StudentsController extends Controller
         $validationResult = $this->validationOfRecords($request);
         try {
             $SportsArrayToString = '';
-            foreach($request->Sports as $Sport) {
+            foreach ($request->Sports as $Sport) {
                 $SportsArrayToString .= $Sport . ",";
             }
             $request['Sports'] = rtrim($SportsArrayToString, ','); 
             $ColorsArrayToString = '';
-            foreach($request->Colors as $Color) {
+            foreach ($request->Colors as $Color) {
                 $ColorsArrayToString .= $Color . ",";
             }
             $request['Colors'] = rtrim($ColorsArrayToString, ','); 
