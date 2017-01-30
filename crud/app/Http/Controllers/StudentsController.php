@@ -24,23 +24,9 @@ class StudentsController extends Controller
             echo 'caught exception', $e->getMessage();
         }
     }
-    public function validate()
-    {
-	 $this->validate($request, [
-            'name' => 'required|alpha|min:2|max:40',
-            'email' => 'required|email|unique:users',
-            'Gender' => 'required|alpha',
-            'Department' => 'required',
-            'Sports' => 'required',
-            'Colors' => 'required',
-            'Physics' => 'required|integer|between:1,100',
-            'Chemistry' => 'required|integer|between:1,100',
-            'Maths' => 'required|integer|between:1,100'
-        ]);
-    }
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $validate = $this->validate($request, [
             'name' => 'required|alpha|min:2|max:40',
             'email' => 'required|email|unique:users',
             'Gender' => 'required|alpha',
