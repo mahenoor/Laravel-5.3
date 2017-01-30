@@ -40,7 +40,7 @@ class StudentsController extends Controller
     }
     public function store(Request $request)
     {
-        $validation = $this->validationOfRecords($request);
+        $validationResult = $this->validationOfRecords($request);
         try {
             $SportsArrayToString = '';
             foreach($request->Sports as $Sport) {
@@ -88,7 +88,7 @@ class StudentsController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $validation = $this->validationOfRecords($request);
+        $validationResult = $this->validationOfRecords($request);
         try {
             $SportsArrayToString = '';
             foreach($request->Sports as $Sport) {
