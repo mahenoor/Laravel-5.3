@@ -561,15 +561,13 @@ class HomeController extends Controller
         $resourceRatingDetails = $this->userRepository->getResourceRatingDetails($people_id, $startdate, $enddate, $user);
         $feedbackTransactionData = [];
         foreach ($resourceRatingDetails as $feedbackTransaction) {
-
-            $feedbackTransactionData[$feedbackTransaction->feedback_metrics_id] = $feedbackTransaction->toArray();
+	    $feedbackTransactionData[$feedbackTransaction->feedback_metrics_id] = $feedbackTransaction->toArray();
         }
         if ($feedbackTransactionData) {
             return view('admin.feedback.plFeedbackForm', compact('projectData', 'feedbackTransactionData'));
         }
         return view('admin.feedback.feedback', compact('projectData', 'feedbackTransactionData'));
     }
-
     public function getNotification()
     {
         if (Session::get('role') == config('custom.projectManagerId')) {
