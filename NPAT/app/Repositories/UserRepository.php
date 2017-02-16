@@ -180,7 +180,6 @@ class UserRepository
                 $roleId = Auth::user()->roles[0]->id;
             }
         }
-
         return $roleId;
     }
 
@@ -272,13 +271,11 @@ class UserRepository
             case Config::get('roles.project-manager'):
                 $projectData = $this->feedbackRepository->getdata();
                 $redirect['view'] = 'feedback_form';
-
-                $redirect['data'] = [
+		$redirect['data'] = [
                     'userDetails' => $userDetails,
                     'projectData' => $projectData
                 ];
-
-                break;
+		break;
             case Config::get('roles.admin'):
                 $userDetails = $this->getRolesNameId();
                 $formData = $this->adminRepo->getFormDetails();
@@ -291,8 +288,7 @@ class UserRepository
                 ];
                 break;
         }
-
-        return $redirect;
+	return $redirect;
     }
 
     /**
@@ -304,8 +300,7 @@ class UserRepository
     public function getRatingDisplay($peopleId, $projectId, $managerId, $fromDate, $toDate, $role = null)
     {
         $peopleId = explode(',', $peopleId);
-
-        $metrics = FeedbackMetrics::join('feedback_transaction', 'feedback_metrics.id', '=',
+	$metrics = FeedbackMetrics::join('feedback_transaction', 'feedback_metrics.id', '=',
             'feedback_transaction.feedback_metrics_id')
             ->join('people_feedback', 'people_feedback.id', '=', 'feedback_transaction.people_feedback_id')
             ->join('users', 'users.id', '=', 'people_feedback.manager_id')
@@ -318,12 +313,9 @@ class UserRepository
             ->orderBy('category_id','ASC')
             ->orderBy('feedback_metrics.id')
             ->get()->toArray();
-
-        $quarter = $this->feedbackTransactionRepository->getQuarterCount($peopleId, $projectId, $managerId, $fromDate, $toDate);
-
-        $getMetricData = $this->feedbackTransactionRepository->getMetricsWithQuarter($quarter, $metrics, $peopleId, $projectId, $managerId, $fromDate, $toDate);
-
-        return $getMetricData;
+	$quarter = $this->feedbackTransactionRepository->getQuarterCount($peopleId, $projectId, $managerId, $fromDate, $toDate);
+	$getMetricData = $this->feedbackTransactionRepository->getMetricsWithQuarter($quarter, $metrics, $peopleId, $projectId, $managerId, $fromDate, $toDate);
+	return $getMetricData;
     }
 
     /**
@@ -342,38 +334,29 @@ class UserRepository
         $ratingTotalCount = count($getMetricData[0]['values']);
         $percentage = [];
         $quarter_percentage = [];
-
-        $category_percentage = $this->getCategoryPercentageValues($peopleId);
-
-        for($i=0;$i<$ratingTotalCount;$i++) {
-            if( !empty($getMetricData[0]['values'][$i]) ){
+	$category_percentage = $this->getCategoryPercentageValues($peopleId);
+	for ($i=0;$i<$ratingTotalCount;$i++) {
+            if (!empty($getMetricData[0]['values'][$i]) ){
                 $start_date = $getMetricData[0]['values'][$i]['start_date'];
                 $end_date = $getMetricData[0]['values'][$i]['end_date'];
-
-                if(isset($category_percentage[1]) && $category_percentage[1] == 0) {
+		if (isset($category_percentage[1]) && $category_percentage[1] == 0) {
                     $percentage[$i][] = 0;
-
-                }elseif (isset($category_percentage[0]) && $category_percentage[0] == 100) {
+                } elseif (isset($category_percentage[0]) && $category_percentage[0] == 100) {
                     $percentage[$i][] = $this->feedbackMetric_perPeople($start_date, $end_date, $i, $designation_id, 0, $peopleId, $projectId, $managerId, $getMetricData, $category_percentage);
-
-                }else{
+                } else {
                     foreach ($categories as $category) {
                         $percentage[$i][$category->id] = $this->feedbackMetric_perPeople($start_date, $end_date, $i, $designation_id, $category->id, $peopleId, $projectId, $managerId, $getMetricData, $category_percentage);
                     }
                 }
             }
         }
-
-        foreach($percentage as $value){
+        foreach($percentage as $value) {
             $quarter_percentage[] = round(array_sum($value), 2);
-        }
-
-        return $quarter_percentage;
+	}       
+	return $quarter_percentage;
     }
-
-    function feedbackMetric_perPeople($start_date,$end_date,$i,$designation_id,$cat_id,$peopleId,$projectId,$managerId,$getMetricData,$category_percentage){
-
-        $metricsrowdata = FeedbackMetrics::join('feedback_transaction', 'feedback_metrics.id', '=',
+    function feedbackMetric_perPeople($start_date,$end_date,$i,$designation_id,$cat_id,$peopleId,$projectId,$managerId,$getMetricData,$category_percentage) {
+	    $metricsrowdata = FeedbackMetrics::join('feedback_transaction', 'feedback_metrics.id', '=',
             'feedback_transaction.feedback_metrics_id')
             ->join('designation_feedback_metric','designation_feedback_metric.metrics_id','=','feedback_metrics.id')
             ->join('people_feedback', 'people_feedback.id', '=', 'feedback_transaction.people_feedback_id')
@@ -383,7 +366,7 @@ class UserRepository
             ->where('designation_feedback_metric.navigator_designation_id', $designation_id)
             ->where('people_feedback.type', '!=', '');
 
-            if($cat_id > 0){
+            if ($cat_id > 0) {
                 $metricsrowdata = $metricsrowdata->where('feedback_metrics.category_id','=',$cat_id);
             }
 
@@ -396,10 +379,10 @@ class UserRepository
             ->orderBy('category_id','ASC')
             ->get()->toArray();
 
-        if($metricsrowdata && ($metricsrowdata[0]['metrics_count'] > 0 || $metricsrowdata[0]['metrics_sum'] > 0) ){
+        if ($metricsrowdata && ($metricsrowdata[0]['metrics_count'] > 0 || $metricsrowdata[0]['metrics_sum'] > 0) ) {
             $category_average = $metricsrowdata[0]['metrics_sum'] / $metricsrowdata[0]['metrics_count'];
             return $percentage = $category_average * ($category_percentage[$cat_id]/100);
-        }else{
+        } else {
             return 0;
         }
     }
